@@ -1,0 +1,30 @@
+#! /usr/bin/env node
+// vim: set ft=javascript ts=2 sw=2 expandtab:
+'use strict'
+const minimist = require('minimist')
+const path = require('path')
+const buildjs = require('../')
+const Loggerr = require('loggerr')
+const cliFormatter = require('loggerr/formatters/cli')
+
+;(async (opts) => {
+  const log = new Loggerr({
+    formatter: cliFormatter,
+    level: opts.debug ? Loggerr.DEBUG : Loggerr.NOTICE
+  })
+
+  await buildjs({
+		logger: log,
+		entries: opts.entries,
+    watch: opts.watch,
+    minify: opts.minify,
+    debug: opts.debug,
+    basedir: opts.basedir,
+		outputdir: opts.outputdir,
+		outputFilename: opts.outputFilename,
+		outputMapFilename: opts.outputMapFilename,
+		outputUrl: opts.outputUrl
+  })
+
+	log.notice('build complete')
+})(minimist(process.argv.slice(2)))
