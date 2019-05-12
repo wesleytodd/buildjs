@@ -34,7 +34,7 @@
     "through2": "^3.0.0",
     "uglify-es": "^3.3.9",
     "uglifyify": "^5.0.1",
-    "watchify": "^3.11.0"
+    "watchify": "^3.11.1"
   },
   "devDependencies": {
     "mocha": "^5.2.0",
