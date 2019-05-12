@@ -44,6 +44,12 @@ module.exports = function buildJs (options) {
 
   const bundle = browserify(browserifyOpts)
 
+  if (opts.require) {
+    Object.keys(opts.require).forEach((key) => {
+      bundle.require(opts.require[key], { expose: key })
+    })
+  }
+
   // Add uglifyify if we are in minify and not debug mode
   if (opts.minify && !opts.debug) {
     bundle.transform('uglifyify', {
