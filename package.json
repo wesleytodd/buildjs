@@ -1,6 +1,6 @@
 {
   "name": "@wesleytodd/buildjs",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "An optinionted js build step with browserify",
   "author": "Wes Todd <wes@wesleytodd.com>",
   "keywords": [
