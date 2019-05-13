@@ -20,7 +20,7 @@ module.exports = function buildJs (options) {
   opts.outputdir = path.join(opts.basedir, opts.outputdir || 'dist')
   opts.outputFilename = path.relative(opts.basedir, path.join(opts.outputdir, opts.outputFilename || 'index-{{hash}}.js'))
   opts.outputMapFilename = path.relative(opts.basedir, path.join(opts.outputdir, opts.outputMapFilename || 'index-{{hash}}.js.map'))
-  opts.outputUrl = 'index-{{hash}}.js'
+  opts.outputMapUrl = opts.outputMapUrl || 'index-{{hash}}.js.map'
   opts.debug = opts.debug || false
   opts.watch = opts.watch || false
   opts.minify = opts.minify || false
@@ -106,8 +106,8 @@ function createBundler (bundle, log, opts) {
         const map = path.join(opts.basedir, opts.outputMapFilename.replace('{{hash}}', hash))
 
         // Update source map url
-        const outUrl = opts.outputUrl.replace('{{hash}}', hash)
-        bundleContent = bundleContent.replace(`//# sourceMappingURL=${opts.outputUrl}`, `//# sourceMappingURL=${outUrl}`)
+        const outUrl = opts.outputMapUrl.replace('{{hash}}', hash)
+        bundleContent = bundleContent.replace(`//# sourceMappingURL=${opts.outputMapUrl}`, `//# sourceMappingURL=${outUrl}`)
 
         // Write out files
         mkdirp(path.dirname(out), (err) => {
@@ -134,7 +134,7 @@ function createBundler (bundle, log, opts) {
       }
 
       // Bundle and extract source map
-      pump(bundle.bundle(), exorcist(sourceMapConcatStream, opts.outputUrl), bundleConcatStream, onBundleComplete)
+      pump(bundle.bundle(), exorcist(sourceMapConcatStream, opts.outputMapUrl), bundleConcatStream, onBundleComplete)
     })
   }
 }
