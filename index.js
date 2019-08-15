@@ -11,6 +11,8 @@ const concat = require('concat-stream')
 const pump = require('pump')
 const Loggerr = require('loggerr')
 const cliFormatter = require('loggerr/formatters/cli')
+const babelify = require('babelify')
+const envify = require('envify')
 
 module.exports = function buildJs (options) {
   const opts = options || {}
@@ -24,6 +26,7 @@ module.exports = function buildJs (options) {
   opts.debug = opts.debug || false
   opts.watch = opts.watch || false
   opts.minify = opts.minify || false
+  opts.babelify = opts.babelify || false
 
   // Create loggerr
   const log = opts.logger || new Loggerr({
@@ -38,7 +41,6 @@ module.exports = function buildJs (options) {
     packageCache: {}, // provide our own cache, WHY???
     fullPaths: !!opts.debug,
     entries: opts.entries || 'index.js',
-    transform: ['babelify', 'envify'],
     basedir: opts.basedir
   }, opts.browserifyOpts)
 
@@ -48,6 +50,14 @@ module.exports = function buildJs (options) {
     Object.keys(opts.require).forEach((key) => {
       bundle.require(opts.require[key], { expose: key })
     })
+  }
+
+  // Always run envify
+  bundle.transform(envify)
+
+  // Babelify
+  if (opts.babelify) {
+    bundle.transform(babelify.configure(opts.babelify))
   }
 
   // Add uglifyify if we are in minify and not debug mode
