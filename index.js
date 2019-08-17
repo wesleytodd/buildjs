@@ -129,13 +129,13 @@ function createBundler (bundle, log, opts) {
             if (err) {
               return reject(err)
             }
-            log.notice(`wrote: ${path.relative(opts.basedir, out)}`)
+            log.notice(`wrote: ${path.relative(opts.outputdir, out)}`)
 
             fs.writeFile(map, sourceMapContent, (err) => {
               if (err) {
                 return reject(err)
               }
-              log.notice(`wrote: ${path.relative(opts.basedir, map)}`)
+              log.notice(`wrote: ${path.relative(opts.outputdir, map)}`)
 
               resolve(out)
             })
