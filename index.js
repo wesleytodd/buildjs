@@ -1,4 +1,3 @@
-// vim: set ft=javascript ts=2 sw=2 expandtab:
 'use strict'
 const path = require('path')
 const fs = require('fs')
@@ -19,10 +18,11 @@ module.exports = function buildJs (options) {
 
   // Set defaults
   opts.basedir = opts.basedir || process.cwd()
-  opts.outputdir = path.join(opts.basedir, opts.outputdir || 'dist')
-  opts.outputFilename = path.relative(opts.basedir, path.join(opts.outputdir, opts.outputFilename || 'index-{{hash}}.js'))
-  opts.outputMapFilename = path.relative(opts.basedir, path.join(opts.outputdir, opts.outputMapFilename || 'index-{{hash}}.js.map'))
-  opts.outputMapUrl = opts.outputMapUrl || 'index-{{hash}}.js.map'
+  opts.entries = Array.isArray(opts.entries) ? opts.entries : [opts.entries || 'index.js']
+  opts.outputdir = path.resolve(opts.basedir, opts.outputdir || 'dist')
+  opts.outputFilename = path.resolve(opts.outputdir, opts.outputFilename || 'index-{{hash}}.js')
+  opts.outputMapFilename = path.resolve(opts.outputdir, opts.outputMapFilename || 'index-{{hash}}.js.map')
+  opts.outputMapUrl = opts.outputMapUrl || opts.outputMapFilename || 'index-{{hash}}.js.map'
   opts.debug = opts.debug || false
   opts.watch = opts.watch || false
   opts.minify = opts.minify || false
@@ -40,7 +40,7 @@ module.exports = function buildJs (options) {
     cache: {}, // provide our own cache, WHY???
     packageCache: {}, // provide our own cache, WHY???
     fullPaths: !!opts.debug,
-    entries: opts.entries || 'index.js',
+    entries: opts.entries.map((e) => path.resolve(opts.basedir, e)),
     basedir: opts.basedir
   }, opts.browserifyOpts)
 
@@ -112,8 +112,8 @@ function createBundler (bundle, log, opts) {
 
         // Hash the file contents and update the filenames
         const hash = crypto.createHash('sha256').update(bundleContent).digest('hex')
-        const out = path.join(opts.basedir, opts.outputFilename.replace('{{hash}}', hash))
-        const map = path.join(opts.basedir, opts.outputMapFilename.replace('{{hash}}', hash))
+        const out = opts.outputFilename.replace('{{hash}}', hash)
+        const map = opts.outputMapFilename.replace('{{hash}}', hash)
 
         // Update source map url
         const outUrl = opts.outputMapUrl.replace('{{hash}}', hash)
